@@ -1,0 +1,68 @@
+/*! 基础样式 */
+// 去除浮动
+.cl-fx:before, .cl-fx:after{
+	content: " ";
+	display: table;
+}
+
+.cl-fx:after{
+	clear: both;
+}
+
+// 文字超界带出省略号
+.one-line{
+	white-space: nowrap;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	display: block;
+}
+
+// 块水平居中
+.block-center-v{
+    display: flex;
+	justify-content: center;
+	align-items: center;
+}
+
+.block-space-v{
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+}
+
+// 块垂直居中
+.block-center-h{
+    display: flex;
+    flex-direction: column;
+	justify-content: center;
+	align-items: center;
+}
+
+.gap-p{
+	padding: 5px 0;
+	background-color: #fff;
+}
+
+.gap-m{
+	margin: 5px 0;
+}
+
+.list-box-content{
+	padding: 15px 0;
+	margin: 0 10px;
+}
+
+// 图片居中显示
+.img-m-item {
+    position: absolute;
+    top: 50%;
+    left: 0;
+    transform: translate(0, -50%);
+    display: block;
+    width: 100%;
+}
+
+.disable-btn{
+	background-color: #c8c8c8;
+	opacity: .6;
+}

@@ -1,0 +1,3 @@
+export const RECORD_USERINFO = 'RECORD_USERINFO';
+export const SYNC_USERINFO = 'SYNC_USERINFO';
+export const OUT_LOGIN = 'OUT_LOGIN';
