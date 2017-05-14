@@ -12,26 +12,29 @@ Vue.use(Router);
 export default new Router({
 	routes: [
 		{
-			path: '/home',
-			name: 'Home',
-			component: home,
-			meta: {
-				title: '首页'
-			}
-		},
-		{
 			path: '/',
 			name: 'Login',
 			component: login,
 			meta: {
-				title: '登录'
+				title: '登录',
+				workType: 'S'
+			}
+		},
+		{
+			path: '/home',
+			name: 'Home',
+			component: home,
+			meta: {
+				title: '首页',
+				workType: 'N'
 			}
 		},
 		{
 			path: '/login',
 			component: login,
 			meta: {
-				title: '登录'
+				title: '登录',
+				workType: 'S'
 			}
 		},
 		{
@@ -39,7 +42,8 @@ export default new Router({
 			name: 'Setting',
 			component: setting,
 			meta: {
-				title: '设置'
+				title: '设置',
+				workType: 'N'
 			}
 		},
 		{
@@ -47,7 +51,8 @@ export default new Router({
 			name: 'Inspection',
 			component: inspection,
 			meta: {
-				title: '巡检'
+				title: '巡检',
+				workType: 'W'
 			}
 		},
 		{
@@ -55,7 +60,8 @@ export default new Router({
 			name: 'TaskDetail',
 			component: taskDetail,
 			meta: {
-				title: '巡检点详情'
+				title: '巡检点详情',
+				workType: 'W'
 			}
 		}
 	]

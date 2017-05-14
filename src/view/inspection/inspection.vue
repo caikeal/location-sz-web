@@ -22,7 +22,7 @@
 			<div class="next-inspection cl-fx">
 				<div class="place-icon">
 					<i></i>
-					<span>当前巡检位置</span>
+					<span>下个巡检位置</span>
 				</div>
 				<div class="place-name one-line">
 					<span>星巴克咖啡</span>

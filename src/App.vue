@@ -7,8 +7,49 @@
 </template>
 
 <script>
+import { mapState } from 'vuex';
+import apis from './service/getData.js';
+
 export default {
-	name: 'app'
+	name: 'app',
+	computed: {
+		...mapState([
+			'userInfo'
+		])
+	},
+	created () {
+		this.pointBack();
+	},
+	methods: {
+		pointBack () {
+			/*
+			 * 巡检位置上报
+			 * 1.登录页面不用上报,type为S
+			 * 2.巡检页面type使用W,(inspection/task-detail)
+			 * 3.非巡检页面type使用N
+			 */
+			setInterval(() => {
+				let type = this.$route.meta.workType;
+				if (type === 'S' || !this.userInfo || !this.userInfo.token) {
+					return false;
+				}
+				// 组织上传数据
+				let params = {
+					type,
+					x: 13539243.805673061,
+					y: 3667103.790031852,
+					group_id: 1
+				};
+				apis.reportingLocation(params)
+				.then(() => {
+					return true;
+				})
+				.catch(() => {
+					return false;
+				});
+			}, 1000);
+		}
+	}
 };
 </script>
 

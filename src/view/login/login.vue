@@ -43,6 +43,9 @@
 		},
 		created () {
 			changeTitle(this.$route);
+			// 同步用户信息
+			this.SYNC_USERINFO();
+			// 初步验证是否登录
 			if (this.userInfo &&
 				this.userInfo.token) {
 				this.$router.push({name: 'Home'});
@@ -50,7 +53,8 @@
 		},
 		methods: {
 			...mapMutations([
-				'RECORD_USERINFO'
+				'RECORD_USERINFO',
+				'SYNC_USERINFO'
 			]),
 			goLogin () {
 				this.valid = {msg: '', ok: true};

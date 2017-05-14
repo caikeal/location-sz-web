@@ -6,7 +6,7 @@ import {readLocal} from '../utils/localstorage.js';
  * 接口调用类参数统一配置.
  */
 axios.defaults.baseURL = env.baseUrl;
-axios.defaults.timeout = 5000;
+axios.defaults.timeout = 8000;
 let user = readLocal('user');
 if (user && user.token) {
 	axios.defaults.headers.common['Authorization'] = `Bearer ${user.token}`;
@@ -39,4 +39,25 @@ let logout = () => {
 	return axios.get('/logout');
 };
 
-export default { axios, login, logout };
+/**
+ * 图片上传
+ * @param  { FormData } poster 图片文件
+ * @return { Promise }
+ */
+let upload = (poster) => {
+	return axios.post('/upload/images', poster);
+};
+
+/**
+ * 上报位置信息
+ * @param  { String } options.type                定位类型，S:无需上报，W:巡检中，N:非巡检中
+ * @param  { Number|String } options.x            巡检点x
+ * @param  { Number|String } options.y            巡检点y
+ * @param  { Number|String } options.group_id     巡检点楼层
+ * @return { Promise }
+ */
+let reportingLocation = ({type, x, y, group_id}) => {
+	return axios.post('/point', {type, x, y, group_id});
+};
+
+export default { axios, login, logout, upload, reportingLocation };

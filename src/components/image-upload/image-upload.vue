@@ -39,11 +39,20 @@
 				default () {
 					return false;
 				}
+			},
+			afterUploadShow: {
+				default () {
+					return true;
+				}
 			}
 		},
 		computed: {
 			preImg () {
-				return this.blobImg ? this.blobImg : this.img;
+				if (this.afterUploadShow) {
+					return this.blobImg ? this.blobImg : this.img;
+				} else {
+					return this.img;
+				}
 			},
 			styles () {
 				if (this.preImg) {
@@ -80,6 +89,9 @@
 			editPic (e) {
 				this.blobImg = getFileUrl(e.target);
 				this.imgFile = e.target.files.item(0) ? e.target.files.item(0) : null;
+				if (!this.afterUploadShow) {
+					e.target.value = null;
+				}
 				this.$emit('file-upload', {imgPre: this.blobImg, imgFile: this.imgFile});
 			}
 		}
@@ -103,7 +115,7 @@
 		border-radius: 3px;
 		position: relative;
 		background-color: #fff;
-		width: 65%;
+		width: 80%;
 		padding: 20px 0 10px 0;
 		margin-left: auto;
 		margin-right: auto;
@@ -117,10 +129,11 @@
 		overflow: hidden;
 	}
 	.k-img-upload-panel .k-img-upload-panel__wrapper-card .k-upload-panel__content{
-		width: 135px;
-		height: 81px;
+		width: 200px;
+		height: 110px;
 		background: url('../../assets/images/img-add-bars/card-a.png') no-repeat;
 		background-size: contain;
+		background-position: center center;
 		margin: auto;
 		position: relative;
 		overflow: hidden;
