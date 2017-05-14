@@ -174,6 +174,7 @@
 					top: 0.5rem;
 					// right: 31px;
 					right: 2.1rem;
+					right: calc(10% - 6.5px);
 					border-radius: 50%;
 					width: 15px;
 					height: 15px;
