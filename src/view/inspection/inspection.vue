@@ -69,7 +69,8 @@
 				},
 				taskCheck: '',
 				needSolveTaskList: [],
-				map: null
+				map: null,
+				nowPlaceMaker: null
 			};
 		},
 		computed: {
@@ -78,9 +79,11 @@
 				'taskList',
 				'toSolveTaskList',
 				'myPlace'
-			]),
-			nowPlaceLayer () {
-				return this.loactionMaker(this.myPlace.x, this.myPlace.y, this.myPlace.group_id, this.myPlace.direction);
+			])
+		},
+		watch: {
+			myPlace (val) {
+				this.nowPlaceMaker = this.loactionMaker(val.x, val.y, val.group_id, val.direction);
 			}
 		},
 		created () {
@@ -306,33 +309,48 @@
 			// 我的位置
 			loactionMaker (x, y, groupId, direction) {
 				if (!this.map) return '';
-				// 图标标注对象，默认位置为该楼层中心点
-				let lm = new fengmap.FMLocationMarker({
-					// 设置图片的路径
-					url: '/static/img/pointer.png',
-					// 设置图片显示尺寸
-					size: 80,
-					// 设置图片高度
-					height: 10,
-					// 图片标注渲染完成的回调方法
-					callback: function () {
-						// 在图片载入完成后，设置 "一直可见",即显示优先级最高
-						// 如相同位置有其他标注，则此标注在前。
-						lm.alwaysShow();
-						lm.direction = direction;
-					}
-				});
-				this.map.addLocationMarker(lm);  // 标注层添加Marker
-				lm.setPosition({
-					// 设置定位点的x坐标
-					x: x,
-					// 设置定位点的y坐标
-					y: y,
-					// 设置定位点所在楼层
-					groupID: groupId,
-					// 设置定位点的高于楼层多少
-					zOffset: 1
-				});
+				let lm = this.nowPlaceMaker;
+				if (lm) {
+					lm.setPosition({
+						// 设置定位点的x坐标
+						x: x,
+						// 设置定位点的y坐标
+						y: y,
+						// 设置定位点所在楼层
+						groupID: groupId,
+						// 设置定位点的高于楼层多少
+						zOffset: 1
+					});
+					lm.direction = direction;
+				} else {
+					// 图标标注对象，默认位置为该楼层中心点
+					lm = new fengmap.FMLocationMarker({
+						// 设置图片的路径
+						url: '/static/img/pointer.png',
+						// 设置图片显示尺寸
+						size: 80,
+						// 设置图片高度
+						height: 10,
+						// 图片标注渲染完成的回调方法
+						callback: function () {
+							// 在图片载入完成后，设置 "一直可见",即显示优先级最高
+							// 如相同位置有其他标注，则此标注在前。
+							lm.alwaysShow();
+							lm.direction = direction;
+						}
+					});
+					this.map.addLocationMarker(lm);  // 标注层添加Marker
+					lm.setPosition({
+						// 设置定位点的x坐标
+						x: x,
+						// 设置定位点的y坐标
+						y: y,
+						// 设置定位点所在楼层
+						groupID: groupId,
+						// 设置定位点的高于楼层多少
+						zOffset: 1
+					});
+				}
 				return lm;
 			},
 			// 去除巡检点
