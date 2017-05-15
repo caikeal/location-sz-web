@@ -3,7 +3,8 @@ import {
 	SYNC_USERINFO,
 	OUT_LOGIN,
 	TASK_LIST,
-	TO_SOLVE_TASK_LIST
+	TO_SOLVE_TASK_LIST,
+	CLEAR_TASK_LIST
 } from './mutation-types.js';
 
 import { readLocal, saveLocal, clearAllLocal } from '../utils/localstorage.js';
@@ -38,5 +39,10 @@ export default {
 	// 需要完成的任务列表
 	[TO_SOLVE_TASK_LIST] (state, info) {
 		state.toSolveTaskList = info;
+	},
+	// 清空任务列表和完成列表
+	[CLEAR_TASK_LIST] (state) {
+		state.taskList = [];
+		state.toSolveTaskList = [];
 	}
 };

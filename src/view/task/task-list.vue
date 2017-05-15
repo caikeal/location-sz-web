@@ -45,9 +45,10 @@
 				this.$router.push({name: 'Login'});
 			}
 			// 判断是否存在任务列表、待解决任务列表，存在读缓存，否则取新的
-			if (this.taskList.length === 0 || this.toSolveTaskList.length === 0) {
-				this.getInspectionList();
-			}
+			// if (this.taskList.length === 0 || this.toSolveTaskList.length === 0) {
+				// this.getInspectionList();
+			// }
+			this.getInspectionList();
 		},
 		methods: {
 			...mapMutations([

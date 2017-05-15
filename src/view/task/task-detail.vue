@@ -35,7 +35,7 @@
 <script>
 	import changeTitle from '../../utils/changeTitle.js';
 	import { mapState, mapMutations } from 'vuex';
-	import { Radio, Field, Button, Toast, Indicator } from 'mint-ui';
+	import { Radio, Field, Button, Toast, Indicator, MessageBox } from 'mint-ui';
 	import ImgUpload from '../../components/image-upload/image-upload.vue';
 	import apis from '../../service/getData.js';
 	import errorPublic from '../../service/errorPublic.js';
@@ -87,7 +87,8 @@
 		},
 		methods: {
 			...mapMutations([
-				'SYNC_USERINFO'
+				'SYNC_USERINFO',
+				'CLEAR_TASK_LIST'
 			]),
 			uploadImg (imgFile) {
 				let fd = new FormData();
@@ -114,6 +115,36 @@
 				this.images.splice(index, 1);
 			},
 			save () {
+				let taskId = this.$route.params.id;
+				if (!taskId) {
+					MessageBox.alert('非法请求!', '提示');
+					return false;
+				}
+				let poster1 = this.images.length >= 1 ? this.images[0].id : '';
+				let poster2 = this.images.length >= 2 ? this.images[1].id : '';
+				let poster3 = this.images.length >= 3 ? this.images[2].id : '';
+				let params = {
+					has_suspicious_person: this.suspectivePerson,
+					has_suspicious_item: this.suspectiveItem,
+					remark: this.description
+				};
+				poster1 ? params.poster1 = poster1 : '';
+				poster2 ? params.poster2 = poster2 : '';
+				poster3 ? params.poster3 = poster3 : '';
+				apis.reportTask(taskId, params)
+				.then((res) => {
+					Toast({
+						message: '保存成功',
+						iconClass: 'mintui mintui-success',
+						duration: 1000
+					});
+					// 更新任务列表
+					this.CLEAR_TASK_LIST();
+					this.$router.push({ name: 'Inspection' });
+				})
+				.catch((err) => {
+					errorPublic(err.response);
+				});
 				return false;
 			},
 			cancel () {
@@ -127,7 +158,8 @@
 			[Button.name]: Button,
 			[ImgUpload.name]: ImgUpload,
 			[Toast.name]: Toast,
-			[Indicator.name]: Indicator
+			[Indicator.name]: Indicator,
+			[MessageBox.name]: MessageBox
 		}
 	};
 </script>
