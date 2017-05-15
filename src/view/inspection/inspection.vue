@@ -12,11 +12,11 @@
 			</div>
 		</div>
 		<div class="inspection-map">
-		</div>
-		<div class="inspection-task">
-			<ul>
-				<li></li>
-			</ul>
+			<div class="task-list">
+				<router-link :to="{name: 'TaskList'}">
+					<span>列表</span>
+				</router-link>
+			</div>
 		</div>
 		<footer>
 			<div class="next-inspection cl-fx">
@@ -45,6 +45,8 @@
 	import { getScreenHeight, toCNTime } from '../../utils/fixTool.js';
 	import fengmap from 'fengmap';
 	import checkbox from '../../components/checkbox/checkbox.vue';
+	import apis from '../../service/getData.js';
+	import errorPublic from '../../service/errorPublic.js';
 
 	export default {
 		name: 'huawei-inspection',
@@ -57,7 +59,8 @@
 					label: '',
 					disabled: false
 				},
-				taskCheck: ''
+				taskCheck: '',
+				allTaskList: []
 			};
 		},
 		computed: {
@@ -74,6 +77,8 @@
 			if (!this.userInfo || !this.userInfo.token) {
 				this.$router.push({name: 'Login'});
 			}
+			// 获取任务列表
+			this.getInspectionList();
 		},
 		mounted () {
 			// 开启定时器
@@ -83,7 +88,7 @@
 			// 地图初始化
 			document.querySelector('.inspection-map').style.minHeight = (getScreenHeight() - 220 - 49) + 'px';
 			document.querySelector('.inspection-map').style.marginTop = 220 + 'px';
-			document.querySelector('.inspection-task').style.marginBottom = 49 + 'px';
+			document.querySelector('.inspection-map').style.marginBottom = 49 + 'px';
 			this.initMap();
 		},
 		beforeDestroy () {
@@ -93,7 +98,8 @@
 		},
 		methods: {
 			...mapMutations([
-				'SYNC_USERINFO'
+				'SYNC_USERINFO',
+				'TASK_LIST'
 			]),
 			initMap () {
 				// 定义全局map变量
@@ -175,6 +181,16 @@
 						}
 					});
 				});
+			},
+			getInspectionList () {
+				apis.taskList()
+				.then((res) => {
+					this.allTaskList = res.data.data;
+					this.TASK_LIST(this.allTaskList);
+				})
+				.catch((err) => {
+					errorPublic(err.response);
+				});
 			}
 		},
 		components: {
@@ -196,6 +212,7 @@
 			left: 0;
 			width: 100%;
 			background-color: #e2e2e2;
+			z-index: 9999;
 			.heading {
 				background: url('../../assets/images/login/bg.png') no-repeat;
 				background-size: cover;
@@ -235,6 +252,25 @@
 				box-shadow: 0 0 0 1px hsla(0,0%,100%,.3) inset, 0 1px 5px rgba(171, 171, 171, 0.6);
 			}
 		}
+		.inspection-map {
+			.task-list {
+				position: absolute;
+				bottom: 65px;
+				right: 30px;
+				width: 42px;
+				height: 42px;
+				background-color: $color-white;
+				cursor: pointer;
+				box-shadow: rgba(0, 0, 0, 0.3) 2px 2px 3px;
+				border-radius: 2px;
+				font-size: 0.8em;
+				font-weight: bold;
+				color: rgb(102, 102, 102);
+				text-align: center;
+				line-height: 42px;
+				z-index: 1;
+			}
+		}
 		footer {
 			position: fixed;
 			bottom: 0;
@@ -242,6 +278,7 @@
 			width: 100%;
 			background: #f8f8f8;
 			border-top: 1px solid #e2e2e2;
+			z-index: 9999;
 			.next-inspection {
 				padding: 5px 10px;
 				font-size: 14px;

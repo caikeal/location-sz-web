@@ -47,7 +47,7 @@ export default {
 				.catch(() => {
 					return false;
 				});
-			}, 1000);
+			}, 60000);
 		}
 	}
 };

@@ -60,4 +60,12 @@ let reportingLocation = ({type, x, y, group_id}) => {
 	return axios.post('/point', {type, x, y, group_id});
 };
 
-export default { axios, login, logout, upload, reportingLocation };
+/**
+ * 任务列表
+ * @return { Promise }
+ */
+let taskList = () => {
+	return axios.get('/tasks');
+};
+
+export default { axios, login, logout, upload, reportingLocation, taskList };

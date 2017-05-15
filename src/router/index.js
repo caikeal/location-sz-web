@@ -5,6 +5,7 @@ const login = r => require.ensure([], () => r(require('../view/login/login.vue')
 const home = r => require.ensure([], () => r(require('../view/home/home.vue')), 'home');
 const setting = r => require.ensure([], () => r(require('../view/setting/setting.vue')), 'setting');
 const inspection = r => require.ensure([], () => r(require('../view/inspection/inspection.vue')), 'inspection');
+const taskList = r => require.ensure([], () => r(require('../view/task/task-list.vue')), 'taskList');
 const taskDetail = r => require.ensure([], () => r(require('../view/task/task-detail.vue')), 'taskDetail');
 
 Vue.use(Router);
@@ -52,6 +53,15 @@ export default new Router({
 			component: inspection,
 			meta: {
 				title: '巡检',
+				workType: 'W'
+			}
+		},
+		{
+			path: '/task-list',
+			name: 'TaskList',
+			component: taskList,
+			meta: {
+				title: '巡检点列表',
 				workType: 'W'
 			}
 		},

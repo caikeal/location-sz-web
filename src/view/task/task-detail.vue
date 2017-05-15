@@ -117,6 +117,7 @@
 				return false;
 			},
 			cancel () {
+				this.$router.go(-1);
 				return false;
 			}
 		},
@@ -185,7 +186,7 @@
 			}
 		}
 		.control-bar {
-			margin-top: 35px;
+			margin: 35px 0;
 			padding: 0 25px;
 		}
 		.btn-cancel {
