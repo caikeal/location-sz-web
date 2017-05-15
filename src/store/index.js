@@ -10,7 +10,13 @@ const state = {
 	userInfo: null,    // 用户信息
 	login: true,    // 是否登录
 	taskList: [],    // 任务列表
-	toSolveTaskList: []    // 待解决的任务列表
+	toSolveTaskList: [],    // 待解决的任务列表
+	myPlace: {
+		x: '',
+		y: '',
+		group_id: '',
+		direction: ''
+	}    //  我的位置
 };
 
 export default new Vuex.Store({

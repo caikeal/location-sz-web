@@ -7,7 +7,7 @@
 </template>
 
 <script>
-import { mapState } from 'vuex';
+import { mapState, mapMutations } from 'vuex';
 import apis from './service/getData.js';
 
 export default {
@@ -21,6 +21,9 @@ export default {
 		this.pointBack();
 	},
 	methods: {
+		...mapMutations([
+			'MY_OWN_PLACE'
+		]),
 		pointBack () {
 			/*
 			 * 巡检位置上报
@@ -40,6 +43,12 @@ export default {
 					y: 3667103.790031852,
 					group_id: 1
 				};
+				this.MY_OWN_PLACE({
+					x: params.x,
+					y: params.y,
+					group_id: params.group_id,
+					direction: 180
+				});
 				apis.reportingLocation(params)
 				.then(() => {
 					return true;

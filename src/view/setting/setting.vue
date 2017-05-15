@@ -44,7 +44,8 @@
 				.then(() => {
 					Toast({
 						message: '退出成功！',
-						iconClass: 'mintui mintui-success'
+						iconClass: 'mintui mintui-success',
+						duration: 1500
 					});
 					this.fedLogout();
 					this.$router.push({name: 'Login'});

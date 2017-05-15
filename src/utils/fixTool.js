@@ -1,7 +1,7 @@
 // 浏览器可用高度（去除浏览器头部和底部栏目）
 export function getScreenHeight () {
 	let height = 0;
-	height = document.body.scrollHeight ? document.body.scrollHeight : window.screen.availHeight;
+	height = window.innerHeight ? window.innerHeight : window.screen.availHeight;
 	return height;
 };
 

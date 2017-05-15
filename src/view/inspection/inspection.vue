@@ -25,7 +25,7 @@
 					<span>下个巡检位置</span>
 				</div>
 				<div class="place-name one-line">
-					<span>{{task.name}}</span>
+					<span>{{task.place ? task.place.name : ''}}</span>
 				</div>
 				<div class="task-name">
 					<router-link
@@ -64,19 +64,24 @@
 				task: {
 					value: '',
 					label: '',
-					name: '暂无',
+					place: {name: ''},
 					disabled: false
 				},
 				taskCheck: '',
-				needSolveTaskList: []
+				needSolveTaskList: [],
+				map: null
 			};
 		},
 		computed: {
 			...mapState([
 				'userInfo',
 				'taskList',
-				'toSolveTaskList'
-			])
+				'toSolveTaskList',
+				'myPlace'
+			]),
+			nowPlaceLayer () {
+				return this.loactionMaker(this.myPlace.x, this.myPlace.y, this.myPlace.group_id, this.myPlace.direction);
+			}
 		},
 		created () {
 			// 添加head头
@@ -93,10 +98,10 @@
 			} else {
 				if (this.toSolveTaskList.length) {
 					this.needSolveTaskList = this.toSolveTaskList;
-					this.task.name = this.toSolveTaskList[0].place ? this.toSolveTaskList[0].place.name : '';
+					this.task.place = this.toSolveTaskList[0].place ? this.toSolveTaskList[0].place : {name: ''};
 					this.task.value = this.toSolveTaskList[0].id;
 				} else {
-					this.task.name = '今天任务已完成';
+					this.task.place.name = '今天任务已完成';
 					this.task.value = '';
 					this.task.disabled = true;
 				}
@@ -108,7 +113,7 @@
 				this.time = toCNTime(new Date());
 			}, 1000);
 			// 地图初始化
-			document.querySelector('.inspection-map').style.minHeight = (getScreenHeight() - 220 - 49) + 'px';
+			document.querySelector('.inspection-map').style.height = (getScreenHeight() - 220 - 49) + 'px';
 			document.querySelector('.inspection-map').style.marginTop = 220 + 'px';
 			document.querySelector('.inspection-map').style.marginBottom = 49 + 'px';
 			this.initMap();
@@ -225,9 +230,16 @@
 				this.TO_SOLVE_TASK_LIST(this.needSolveTaskList);
 				if (this.needSolveTaskList.length) {
 					this.task.value = this.needSolveTaskList[0].id;
-					this.task.name = this.needSolveTaskList[0].place ? this.needSolveTaskList[0].place.name : '';
+					this.task.place = this.needSolveTaskList[0].place ? this.needSolveTaskList[0].place : {name: ''};
+
+					// 地图加载完毕后加载点数据
+					this.map.on('loadComplete', () => {
+						if (this.task.place && this.task.place.hasOwnProperty('x')) {
+							this.task.place.options = this.imageMaker(this.task.place.x, this.task.place.y, this.task.place.group_id);
+						}
+					});
 				} else {
-					this.task.name = '今天任务已完成';
+					this.task.place.name = '今天任务已完成';
 					this.task.value = '';
 					this.task.disabled = true;
 				}
@@ -253,15 +265,81 @@
 			removeFirstTask () {
 				this.needSolveTaskList.shift(); // 移除第一项
 				this.TO_SOLVE_TASK_LIST(this.needSolveTaskList); // 同步数据
+				// 移除任务点
+				this.removeMarker(this.task.place.options);
+
 				if (this.needSolveTaskList.length === 0) { // 所有任务完成
-					this.task.name = '今天任务已完成';
+					// 修改提示
+					this.task.place.name = '今天任务已完成';
 					this.task.value = '';
 					return false;
 				}
 				this.task.value = this.needSolveTaskList[0].id;
-				this.task.name = this.needSolveTaskList[0].place ? this.needSolveTaskList[0].place.name : '';
+				this.task.place = this.needSolveTaskList[0].place ? this.needSolveTaskList[0].place : '';
+				// 添加巡检点
+				this.task.place.options = this.imageMaker(this.task.place.x, this.task.place.y, this.task.place.group_id);
 				this.task.disabled = false;
 				this.taskCheck = '';
+			},
+			// 标记巡检点
+			imageMaker (x, y, groupId) {
+				if (!this.map) return '';
+				let group = this.map.getFMGroup(groupId);
+				let layer = group.getOrCreateLayer('imageMarker');
+				// 图标标注对象，默认位置为该楼层中心点
+				let im = new fengmap.FMImageMarker({
+					x: x,
+					y: y,
+					z: 0,
+					url: '/static/img/redPoint.png',        // 设置图片路径
+					size: 80,                               // 设置图片显示尺寸
+					// 图片标注渲染完成的回调方法
+					callback: function () {
+						// 在图片载入完成后，设置 "一直可见",即显示优先级最高
+						// 如相同位置有其他标注，则此标注在前。
+						im.alwaysShow();
+					}
+				});
+				layer.addMarker(im);  // 标注层添加Marker
+				return {layer: layer, marker: im};
+			},
+			// 我的位置
+			loactionMaker (x, y, groupId, direction) {
+				if (!this.map) return '';
+				// 图标标注对象，默认位置为该楼层中心点
+				let lm = new fengmap.FMLocationMarker({
+					// 设置图片的路径
+					url: '/static/img/pointer.png',
+					// 设置图片显示尺寸
+					size: 80,
+					// 设置图片高度
+					height: 10,
+					// 图片标注渲染完成的回调方法
+					callback: function () {
+						// 在图片载入完成后，设置 "一直可见",即显示优先级最高
+						// 如相同位置有其他标注，则此标注在前。
+						lm.alwaysShow();
+						lm.direction = direction;
+					}
+				});
+				this.map.addLocationMarker(lm);  // 标注层添加Marker
+				lm.setPosition({
+					// 设置定位点的x坐标
+					x: x,
+					// 设置定位点的y坐标
+					y: y,
+					// 设置定位点所在楼层
+					groupID: groupId,
+					// 设置定位点的高于楼层多少
+					zOffset: 1
+				});
+				return lm;
+			},
+			// 去除巡检点
+			removeMarker (options) {
+				options.layer.removeMarker(options.marker);
+				options.marker = null;
+				options.layer = null;
 			}
 		},
 		components: {
@@ -283,7 +361,7 @@
 			left: 0;
 			width: 100%;
 			background-color: #e2e2e2;
-			z-index: 9999;
+			z-index: 1000;
 			.heading {
 				background: url('../../assets/images/login/bg.png') no-repeat;
 				background-size: cover;
@@ -349,7 +427,7 @@
 			width: 100%;
 			background: #f8f8f8;
 			border-top: 1px solid #e2e2e2;
-			z-index: 9999;
+			z-index: 1000;
 			.next-inspection {
 				padding: 5px 10px;
 				font-size: 14px;

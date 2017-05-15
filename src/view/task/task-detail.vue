@@ -47,25 +47,25 @@
 				optionsSp: [
 					{
 						label: '没有可疑人员',
-						value: '1'
+						value: '2'
 					},
 					{
 						label: '有可疑人员',
-						value: '2'
+						value: '1'
 					}
 				],
 				optionsSi: [
 					{
 						label: '没有可疑物品',
-						value: '1'
+						value: '2'
 					},
 					{
 						label: '有可疑物品',
-						value: '2'
+						value: '1'
 					}
 				],
-				suspectivePerson: '1',
-				suspectiveItem: '1',
+				suspectivePerson: '2',
+				suspectiveItem: '2',
 				images: [],
 				description: ''
 			};

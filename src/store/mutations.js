@@ -4,7 +4,8 @@ import {
 	OUT_LOGIN,
 	TASK_LIST,
 	TO_SOLVE_TASK_LIST,
-	CLEAR_TASK_LIST
+	CLEAR_TASK_LIST,
+	MY_OWN_PLACE
 } from './mutation-types.js';
 
 import { readLocal, saveLocal, clearAllLocal } from '../utils/localstorage.js';
@@ -44,5 +45,8 @@ export default {
 	[CLEAR_TASK_LIST] (state) {
 		state.taskList = [];
 		state.toSolveTaskList = [];
+	},
+	[MY_OWN_PLACE] (state, info) {
+		state.myPlace = info;
 	}
 };

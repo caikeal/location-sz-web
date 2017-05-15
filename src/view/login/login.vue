@@ -74,7 +74,8 @@
 				.then((res) => {
 					Toast({
 						message: '登录成功！',
-						iconClass: 'mintui mintui-success'
+						iconClass: 'mintui mintui-success',
+						duration: 1500
 					});
 					this.RECORD_USERINFO(res.data.data);
 					this.valid = {msg: '', ok: true};
