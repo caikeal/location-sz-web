@@ -25,15 +25,22 @@
 					<span>下个巡检位置</span>
 				</div>
 				<div class="place-name one-line">
-					<span>星巴克咖啡</span>
+					<span>{{task.name}}</span>
 				</div>
 				<div class="task-name">
-					<router-link :to="{name: 'TaskDetail'}">
+					<router-link
+					v-if="needSolveTaskList.length"
+					:to="{name: 'TaskDetail', params: {id: task.value}}">
 						<span>巡检任务</span>
 					</router-link>
+					<span v-else>巡检任务</span>
 				</div>
 				<div class="quick-over">
-					<k-checkbox :option="task" v-model="taskCheck"></k-checkbox>
+					<k-checkbox
+						:option="task"
+						v-model="taskCheck"
+						@input="quickReportTask">
+					</k-checkbox>
 				</div>
 			</div>
 		</footer>
@@ -55,17 +62,20 @@
 				time: toCNTime(new Date()),
 				autoTimer: '',
 				task: {
-					value: '1',
+					value: '',
 					label: '',
+					name: '暂无',
 					disabled: false
 				},
 				taskCheck: '',
-				allTaskList: []
+				needSolveTaskList: []
 			};
 		},
 		computed: {
 			...mapState([
-				'userInfo'
+				'userInfo',
+				'taskList',
+				'toSolveTaskList'
 			])
 		},
 		created () {
@@ -77,8 +87,20 @@
 			if (!this.userInfo || !this.userInfo.token) {
 				this.$router.push({name: 'Login'});
 			}
-			// 获取任务列表
-			this.getInspectionList();
+			// 判断是否存在任务列表、待解决任务列表，存在读缓存，否则取新的
+			if (this.taskList.length === 0 || this.toSolveTaskList.length === 0) {
+				this.getInspectionList();
+			} else {
+				if (this.toSolveTaskList.length) {
+					this.needSolveTaskList = this.toSolveTaskList;
+					this.task.name = this.toSolveTaskList[0].place ? this.toSolveTaskList[0].place.name : '';
+					this.task.value = this.toSolveTaskList[0].id;
+				} else {
+					this.task.name = '今天任务已完成';
+					this.task.value = '';
+					this.task.disabled = true;
+				}
+			}
 		},
 		mounted () {
 			// 开启定时器
@@ -99,7 +121,8 @@
 		methods: {
 			...mapMutations([
 				'SYNC_USERINFO',
-				'TASK_LIST'
+				'TASK_LIST',
+				'TO_SOLVE_TASK_LIST'
 			]),
 			initMap () {
 				// 定义全局map变量
@@ -185,12 +208,60 @@
 			getInspectionList () {
 				apis.taskList()
 				.then((res) => {
-					this.allTaskList = res.data.data;
-					this.TASK_LIST(this.allTaskList);
+					this.chooseSolveTask(res.data.data);
+					this.TASK_LIST(res.data.data);
 				})
 				.catch((err) => {
 					errorPublic(err.response);
 				});
+			},
+			chooseSolveTask (tasks) {
+				if (tasks.length <= 0) {
+					return false;
+				}
+				this.needSolveTaskList = tasks.filter((item) => {
+					return item.status.length && item.status.indexOf('U') !== -1;
+				});
+				this.TO_SOLVE_TASK_LIST(this.needSolveTaskList);
+				if (this.needSolveTaskList.length) {
+					this.task.value = this.needSolveTaskList[0].id;
+					this.task.name = this.needSolveTaskList[0].place ? this.needSolveTaskList[0].place.name : '';
+				} else {
+					this.task.name = '今天任务已完成';
+					this.task.value = '';
+					this.task.disabled = true;
+				}
+			},
+			quickReportTask () {
+				if (!this.task.value) {
+					return false;
+				}
+				this.task.disabled = true;
+				let params = {
+					has_suspicious_person: 2,
+					has_suspicious_item: 2
+				};
+				apis.reportTask(this.task.value, params)
+				.then((res) => {
+					// 切换到下个任务，并将当前任务从可用任务列表去除
+					this.removeFirstTask();
+				})
+				.catch((err) => {
+					errorPublic(err.response);
+				});
+			},
+			removeFirstTask () {
+				this.needSolveTaskList.shift(); // 移除第一项
+				this.TO_SOLVE_TASK_LIST(this.needSolveTaskList); // 同步数据
+				if (this.needSolveTaskList.length === 0) { // 所有任务完成
+					this.task.name = '今天任务已完成';
+					this.task.value = '';
+					return false;
+				}
+				this.task.value = this.needSolveTaskList[0].id;
+				this.task.name = this.needSolveTaskList[0].place ? this.needSolveTaskList[0].place.name : '';
+				this.task.disabled = false;
+				this.taskCheck = '';
 			}
 		},
 		components: {

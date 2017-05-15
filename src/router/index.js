@@ -66,7 +66,7 @@ export default new Router({
 			}
 		},
 		{
-			path: '/task-detail',
+			path: '/task-detail/:id',
 			name: 'TaskDetail',
 			component: taskDetail,
 			meta: {

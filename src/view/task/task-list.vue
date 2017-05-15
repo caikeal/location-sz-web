@@ -31,7 +31,8 @@
 		computed: {
 			...mapState([
 				'userInfo',
-				'taskList'
+				'taskList',
+				'toSolveTaskList'
 			])
 		},
 		created () {
@@ -43,24 +44,35 @@
 			if (!this.userInfo || !this.userInfo.token) {
 				this.$router.push({name: 'Login'});
 			}
-			// 判断是否存在任务列表，存在读缓存，否则取新的
-			if (this.taskList.length === 0) {
+			// 判断是否存在任务列表、待解决任务列表，存在读缓存，否则取新的
+			if (this.taskList.length === 0 || this.toSolveTaskList.length === 0) {
 				this.getInspectionList();
 			}
 		},
 		methods: {
 			...mapMutations([
 				'SYNC_USERINFO',
-				'TASK_LIST'
+				'TASK_LIST',
+				'TO_SOLVE_TASK_LIST'
 			]),
 			getInspectionList () {
 				apis.taskList()
 				.then((res) => {
+					this.chooseSolveTask(res.data.data);
 					this.TASK_LIST(res.data.data);
 				})
 				.catch((err) => {
 					errorPublic(err.response);
 				});
+			},
+			chooseSolveTask (tasks) {
+				if (tasks.length <= 0) {
+					return false;
+				}
+				this.needSolveTaskList = tasks.filter((item) => {
+					return item.status.length && item.status.indexOf('U') !== -1;
+				});
+				this.TO_SOLVE_TASK_LIST(this.needSolveTaskList);
 			},
 			inspectionStatusToCN (status) {
 				let tem = '';

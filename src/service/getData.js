@@ -68,4 +68,14 @@ let taskList = () => {
 	return axios.get('/tasks');
 };
 
-export default { axios, login, logout, upload, reportingLocation, taskList };
+/**
+ * 任务上报
+ * @param  { Number } id       任务id
+ * @param  { Object } params   任务情况
+ * @return { Promise }
+ */
+let reportTask = (id, params) => {
+	return axios.post(`/tasks/${id}`, params);
+};
+
+export default { axios, login, logout, upload, reportingLocation, taskList, reportTask };

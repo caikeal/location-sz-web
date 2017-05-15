@@ -9,7 +9,8 @@ Vue.use(Vuex);
 const state = {
 	userInfo: null,    // 用户信息
 	login: true,    // 是否登录
-	taskList: []    // 任务列表
+	taskList: [],    // 任务列表
+	toSolveTaskList: []    // 待解决的任务列表
 };
 
 export default new Vuex.Store({
