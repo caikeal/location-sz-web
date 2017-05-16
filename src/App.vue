@@ -9,6 +9,7 @@
 <script>
 import { mapState, mapMutations } from 'vuex';
 import apis from './service/getData.js';
+import beacon from './utils/beacon.js';
 
 export default {
 	name: 'app',
@@ -17,12 +18,14 @@ export default {
 			'userInfo'
 		])
 	},
-	created () {
+	mounted () {
 		this.pointBack();
+		this.getPosition();
 	},
 	methods: {
 		...mapMutations([
-			'MY_OWN_PLACE'
+			'MY_OWN_PLACE',
+			'MY_OWN_DIRECTION'
 		]),
 		pointBack () {
 			/*
@@ -31,24 +34,21 @@ export default {
 			 * 2.巡检页面type使用W,(inspection/task-detail)
 			 * 3.非巡检页面type使用N
 			 */
-			setInterval(() => {
+			// 初始化函数，用户名,获取位置的回调函数
+			window.initPdrPosition(this.userInfo ? this.userInfo.id : 'tf', (x, y, groupID) => {
 				let type = this.$route.meta.workType;
+				// 鉴权
 				if (type === 'S' || !this.userInfo || !this.userInfo.token) {
 					return false;
 				}
 				// 组织上传数据
 				let params = {
 					type,
-					x: 13539243.805673061,
-					y: 3667103.790031852,
-					group_id: 1
+					x: x,
+					y: y,
+					group_id: groupID
 				};
-				this.MY_OWN_PLACE({
-					x: params.x,
-					y: params.y,
-					group_id: params.group_id,
-					direction: 180
-				});
+				this.MY_OWN_PLACE(params);
 				apis.reportingLocation(params)
 				.then(() => {
 					return true;
@@ -56,7 +56,28 @@ export default {
 				.catch(() => {
 					return false;
 				});
-			}, 60000);
+			});
+		},
+		getPosition () {
+			let isOk = beacon.startMonitor();
+			if (isOk) {
+				// 获取beacon数据
+				let getBeacon = function (info) {
+					if (info) {
+						window.bleLocation(info);
+					}
+				};
+				// 获取指南针朝向
+				let getHeading = (info) => {
+					if (info) {
+						// 更新手机朝向，需要一直调用这个函数更新。
+						window.compassHeadingHandler(info);
+						this.MY_OWN_DIRECTION(info);
+					}
+				};
+				beacon.setBeaconInfo(getBeacon);
+				beacon.compassHeading(getHeading);
+			}
 		}
 	}
 };

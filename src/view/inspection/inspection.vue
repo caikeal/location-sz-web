@@ -54,6 +54,7 @@
 	import checkbox from '../../components/checkbox/checkbox.vue';
 	import apis from '../../service/getData.js';
 	import errorPublic from '../../service/errorPublic.js';
+	let map = null; // 定义全局map变量
 
 	export default {
 		name: 'huawei-inspection',
@@ -69,7 +70,6 @@
 				},
 				taskCheck: '',
 				needSolveTaskList: [],
-				map: null,
 				nowPlaceMaker: null
 			};
 		},
@@ -95,20 +95,6 @@
 			if (!this.userInfo || !this.userInfo.token) {
 				this.$router.push({name: 'Login'});
 			}
-			// 判断是否存在任务列表、待解决任务列表，存在读缓存，否则取新的
-			if (this.taskList.length === 0 || this.toSolveTaskList.length === 0) {
-				this.getInspectionList();
-			} else {
-				if (this.toSolveTaskList.length) {
-					this.needSolveTaskList = this.toSolveTaskList;
-					this.task.place = this.toSolveTaskList[0].place ? this.toSolveTaskList[0].place : {name: ''};
-					this.task.value = this.toSolveTaskList[0].id;
-				} else {
-					this.task.place.name = '今天任务已完成';
-					this.task.value = '';
-					this.task.disabled = true;
-				}
-			}
 		},
 		mounted () {
 			// 开启定时器
@@ -120,6 +106,25 @@
 			document.querySelector('.inspection-map').style.marginTop = 220 + 'px';
 			document.querySelector('.inspection-map').style.marginBottom = 49 + 'px';
 			this.initMap();
+			// 判断是否存在任务列表、待解决任务列表，存在读缓存，否则取新的
+			if (this.taskList.length === 0 || this.toSolveTaskList.length === 0) {
+				this.getInspectionList();
+			} else if (this.toSolveTaskList.length) {
+				this.needSolveTaskList = this.toSolveTaskList;
+				this.task.place = this.toSolveTaskList[0].place ? this.toSolveTaskList[0].place : {name: ''};
+				this.task.value = this.toSolveTaskList[0].id;
+				// 地图加载完毕后加载点数据
+				map.on('loadComplete', () => {
+					if (this.task.place &&
+						this.task.place.hasOwnProperty('x')) {
+						this.task.place.options = this.imageMaker(this.task.place.x, this.task.place.y, this.task.place.group_id);
+					}
+				});
+			} else {
+				this.task.place.name = '今天任务已完成';
+				this.task.value = '';
+				this.task.disabled = true;
+			}
 		},
 		beforeDestroy () {
 			if (this.autoTimer) {
@@ -133,8 +138,6 @@
 				'TO_SOLVE_TASK_LIST'
 			]),
 			initMap () {
-				// 定义全局map变量
-				let map;
 				let fmapID = 'mediasoc1002';
 				/* eslint-disable no-new, new-cap */
 				map = new fengmap.FMMap({
@@ -156,7 +159,6 @@
 					// 开发者申请应用名称
 					appName: 'shangyan'
 				});
-				this.map = map;
 
 				// 楼层控制控件配置参数
 				let ctlOpt = new fengmap.controlOptions({
@@ -236,7 +238,7 @@
 					this.task.place = this.needSolveTaskList[0].place ? this.needSolveTaskList[0].place : {name: ''};
 
 					// 地图加载完毕后加载点数据
-					this.map.on('loadComplete', () => {
+					map.on('loadComplete', () => {
 						if (this.task.place && this.task.place.hasOwnProperty('x')) {
 							this.task.place.options = this.imageMaker(this.task.place.x, this.task.place.y, this.task.place.group_id);
 						}
@@ -286,8 +288,8 @@
 			},
 			// 标记巡检点
 			imageMaker (x, y, groupId) {
-				if (!this.map) return '';
-				let group = this.map.getFMGroup(groupId);
+				if (!map) return '';
+				let group = map.getFMGroup(groupId);
 				let layer = group.getOrCreateLayer('imageMarker');
 				// 图标标注对象，默认位置为该楼层中心点
 				let im = new fengmap.FMImageMarker({
@@ -308,7 +310,7 @@
 			},
 			// 我的位置
 			loactionMaker (x, y, groupId, direction) {
-				if (!this.map) return '';
+				if (!map) return '';
 				let lm = this.nowPlaceMaker;
 				if (lm) {
 					lm.setPosition({
@@ -328,7 +330,7 @@
 						// 设置图片的路径
 						url: '/static/img/pointer.png',
 						// 设置图片显示尺寸
-						size: 80,
+						size: 50,
 						// 设置图片高度
 						height: 10,
 						// 图片标注渲染完成的回调方法
@@ -339,7 +341,7 @@
 							lm.direction = direction;
 						}
 					});
-					this.map.addLocationMarker(lm);  // 标注层添加Marker
+					map.addLocationMarker(lm);  // 标注层添加Marker
 					lm.setPosition({
 						// 设置定位点的x坐标
 						x: x,

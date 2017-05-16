@@ -12,10 +12,11 @@ const state = {
 	taskList: [],    // 任务列表
 	toSolveTaskList: [],    // 待解决的任务列表
 	myPlace: {
+		type: '', // 工作类型，S:无，N:非巡检中，W:巡检中
 		x: '',
 		y: '',
 		group_id: '',
-		direction: ''
+		direction: 180
 	}    //  我的位置
 };
 

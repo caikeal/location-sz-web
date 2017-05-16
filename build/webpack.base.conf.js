@@ -26,7 +26,8 @@ module.exports = {
     }
   },
   externals: {
-    'fengmap': 'fengmap'
+    'fengmap': 'fengmap',
+    '$': 'window.jQuery'
   },
   module: {
     rules: [

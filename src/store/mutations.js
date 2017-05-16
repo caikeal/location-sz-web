@@ -5,7 +5,8 @@ import {
 	TASK_LIST,
 	TO_SOLVE_TASK_LIST,
 	CLEAR_TASK_LIST,
-	MY_OWN_PLACE
+	MY_OWN_PLACE,
+	MY_OWN_DIRECTION
 } from './mutation-types.js';
 
 import { readLocal, saveLocal, clearAllLocal } from '../utils/localstorage.js';
@@ -47,6 +48,12 @@ export default {
 		state.toSolveTaskList = [];
 	},
 	[MY_OWN_PLACE] (state, info) {
-		state.myPlace = info;
+		state.myPlace.x = info.x;
+		state.myPlace.y = info.y;
+		state.myPlace.type = info.type;
+		state.myPlace.group_id = info.group_id;
+	},
+	[MY_OWN_DIRECTION] (state, info) {
+		state.myPlace.direction = info;
 	}
 };
