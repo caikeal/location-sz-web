@@ -147,7 +147,7 @@
 	@import '../../assets/sass/parital/_var.scss';
 
 	.huawei-task-list {
-		padding-top: 10px;
+		padding-top: 20px;
 		.content {
 			padding: 15px 15px;
 			line-height: 1.5;

@@ -167,7 +167,7 @@
 	@import '../../assets/sass/parital/_var.scss';
 	.huawei-task-detail {
 		.form-task {
-			margin-top: 25px;
+			margin-top: 20px;
 			.mint-radiolist-title {
 				padding: 5px;
 				font-size: 16px;

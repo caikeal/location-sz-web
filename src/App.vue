@@ -35,7 +35,7 @@ export default {
 			 * 3.非巡检页面type使用N
 			 */
 			// 初始化函数，用户名,获取位置的回调函数
-			window.initPdrPosition(this.userInfo ? this.userInfo.id : 'tf', (x, y, groupID) => {
+			window.initPdrPosition(this.userInfo ? this.userInfo.phone : '13962175383', (x, y, groupID) => {
 				let type = this.$route.meta.workType;
 				// 鉴权
 				if (type === 'S' || !this.userInfo || !this.userInfo.token) {
@@ -64,19 +64,20 @@ export default {
 				// 获取beacon数据
 				let getBeacon = function (info) {
 					if (info) {
-						window.bleLocation(info);
+						window.bleLocation(JSON.parse(info));
 					}
 				};
 				// 获取指南针朝向
 				let getHeading = (info) => {
-					if (info) {
+					let tem = info ? -info : 0;
+					if (tem) {
 						// 更新手机朝向，需要一直调用这个函数更新。
-						window.compassHeadingHandler(info);
-						this.MY_OWN_DIRECTION(info);
+						window.compassHeadingHandler(tem);
+						this.MY_OWN_DIRECTION(tem);
 					}
 				};
-				beacon.setBeaconInfo(getBeacon);
 				beacon.compassHeading(getHeading);
+				beacon.setBeaconInfo(getBeacon);
 			}
 		}
 	}

@@ -82,8 +82,11 @@
 			])
 		},
 		watch: {
-			myPlace (val) {
-				this.nowPlaceMaker = this.loactionMaker(val.x, val.y, val.group_id, val.direction);
+			myPlace: {
+				handler (val) {
+					this.nowPlaceMaker = this.loactionMaker(val.x, val.y, val.group_id, val.direction);
+				},
+				deep: true
 			}
 		},
 		created () {

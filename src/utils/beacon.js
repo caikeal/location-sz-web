@@ -34,12 +34,12 @@ const startMonitor = function () {
 	iframe.src = 'beacon://startRanging';
 	iframe.style.display = 'none';
 	iframe.addEventListener('load', function () {
-		window.alert('start1!');
+		// window.alert('start1!');
 		document.body.removeChild(iframe);
 	});
 	document.body.appendChild(iframe);
 	setTimeout(function () {
-		window.alert('start2!');
+		// window.alert('start2!');
 		document.body.removeChild(iframe);
 	}, 2000);
 	return true;
@@ -55,12 +55,12 @@ const stopMonitor = function () {
 	iframe.src = 'beacon://stopRanging';
 	iframe.style.display = 'none';
 	iframe.addEventListener('load', function () {
-		window.alert('stop1!');
+		// window.alert('stop1!');
 		document.body.removeChild(iframe);
 	});
 	document.body.appendChild(iframe);
 	setTimeout(function () {
-		window.alert('stop2!');
+		// window.alert('stop2!');
 		document.body.removeChild(iframe);
 	}, 2000);
 	return true;
