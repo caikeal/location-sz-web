@@ -29,7 +29,7 @@
 				</div>
 				<div class="task-name">
 					<router-link
-					v-if="needSolveTaskList.length"
+					v-if="needSolveTaskList.length && !this.task.disabled"
 					:to="{name: 'TaskDetail', params: {id: task.value}}">
 						<span>巡检任务</span>
 					</router-link>
@@ -48,6 +48,7 @@
 </template>
 <script>
 	import changeTitle from '../../utils/changeTitle.js';
+	import getDistance from '../../utils/mathExtends.js';
 	import { mapState, mapMutations } from 'vuex';
 	import { getScreenHeight, toCNTime } from '../../utils/fixTool.js';
 	import fengmap from 'fengmap';
@@ -66,7 +67,7 @@
 					value: '',
 					label: '',
 					place: {name: ''},
-					disabled: false
+					disabled: true
 				},
 				taskCheck: '',
 				needSolveTaskList: [],
@@ -85,6 +86,10 @@
 			myPlace: {
 				handler (val) {
 					this.nowPlaceMaker = this.loactionMaker(val.x, val.y, val.group_id, val.direction);
+					let nearDis = getDistance(val, this.task.place);
+					if (!isNaN(nearDis) && nearDis <= 10) {
+						this.task.disabled = false;
+					};
 				},
 				deep: true
 			}
@@ -133,6 +138,7 @@
 			if (this.autoTimer) {
 				clearInterval(this.autoTimer);
 			}
+			map = null;
 		},
 		methods: {
 			...mapMutations([
