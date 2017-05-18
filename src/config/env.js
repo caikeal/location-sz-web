@@ -7,6 +7,11 @@
 let baseUrl;
 let routerMode;
 const imgBaseUrl = 'http://139.196.11.82:8100';
+const mapInfo = {
+	key: '92a2b21f85c5ce7dc36ce5dbfda93b19',
+	name: 'shangyan',
+	id: 'mediasoc1002'
+};
 
 if (process.env.NODE_ENV === 'development') {
 	baseUrl = 'http://localhost:8080/api/v1';
@@ -19,5 +24,6 @@ if (process.env.NODE_ENV === 'development') {
 export default {
 	baseUrl,
 	routerMode,
-	imgBaseUrl
+	imgBaseUrl,
+	mapInfo
 };

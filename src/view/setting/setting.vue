@@ -1,7 +1,7 @@
 <template>
 	<div class="huawei-setting">
 		<div class="setting-cell">
-			<mt-cell title="人员定位" is-link :to="{ name: 'Home' }"></mt-cell>
+			<mt-cell title="人员定位" is-link :to="{ name: 'Inspector' }"></mt-cell>
 		</div>
 		<div class="setting-control">
 			<mt-button size="large" type="primary" class="btn-logout" @click="goLogout">退出</mt-button>

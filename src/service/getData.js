@@ -78,4 +78,20 @@ let reportTask = (id, params) => {
 	return axios.post(`/tasks/${id}`, params);
 };
 
-export default { axios, login, logout, upload, reportingLocation, taskList, reportTask };
+/**
+ * 巡检员列表
+ * @return { Promise }
+ */
+let inspectorList = () => {
+	return axios.get('/inspector/list');
+};
+
+/**
+ * 巡检员位置点
+ * @return { Promise }
+ */
+let inspectorPoint = (id) => {
+	return axios.get('/inspector/place', {params: {id: id}});
+};
+
+export default { axios, login, logout, upload, reportingLocation, taskList, reportTask, inspectorList, inspectorPoint };

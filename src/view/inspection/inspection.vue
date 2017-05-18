@@ -55,6 +55,7 @@
 	import checkbox from '../../components/checkbox/checkbox.vue';
 	import apis from '../../service/getData.js';
 	import errorPublic from '../../service/errorPublic.js';
+	import env from '../../config/env.js';
 	let map = null; // 定义全局map变量
 
 	export default {
@@ -147,7 +148,7 @@
 				'TO_SOLVE_TASK_LIST'
 			]),
 			initMap () {
-				let fmapID = 'mediasoc1002';
+				let fmapID = env.mapInfo.id;
 				/* eslint-disable no-new, new-cap */
 				map = new fengmap.FMMap({
 					// 渲染dom
@@ -164,9 +165,9 @@
 					focusAnimateMode: true,
 					focusAlphaMode: false,
 					// 开发者申请应用下web服务的key
-					key: '92a2b21f85c5ce7dc36ce5dbfda93b19',
+					key: env.mapInfo.key,
 					// 开发者申请应用名称
-					appName: 'shangyan'
+					appName: env.mapInfo.name
 				});
 
 				// 楼层控制控件配置参数

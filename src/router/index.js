@@ -7,6 +7,7 @@ const setting = r => require.ensure([], () => r(require('../view/setting/setting
 const inspection = r => require.ensure([], () => r(require('../view/inspection/inspection.vue')), 'inspection');
 const taskList = r => require.ensure([], () => r(require('../view/task/task-list.vue')), 'taskList');
 const taskDetail = r => require.ensure([], () => r(require('../view/task/task-detail.vue')), 'taskDetail');
+const inspector = r => require.ensure([], () => r(require('../view/inspector/inspector.vue')), 'inspector');
 
 Vue.use(Router);
 
@@ -72,6 +73,15 @@ export default new Router({
 			meta: {
 				title: '巡检点详情',
 				workType: 'W'
+			}
+		},
+		{
+			path: '/inspector',
+			name: 'Inspector',
+			component: inspector,
+			meta: {
+				title: '人员定位',
+				workType: 'N'
 			}
 		}
 	]
