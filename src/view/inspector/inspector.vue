@@ -3,7 +3,9 @@
 		<div class="inspector-map-container"></div>
 		<div class="inspector-list cl-fx">
 			<div class="inspector-info cl-fx" v-for="user in userList">
-				<div :class="['inspector-poster', user.isOn ? 'user-on' : 'user-off']">
+				<div
+				:class="['inspector-poster', user.isOn ? 'user-on' : 'user-off']"
+				@click="shinePoint(user)">
 					<img :src="user.poster" alt="poster">
 				</div>
 				<div :class="['inspector-name', 'one-line', user.isOn ? 'user-on' : 'user-off']">
@@ -32,6 +34,9 @@
 			};
 		},
 		created () {
+			if (this.$route.meta.refresh) {
+				window.location.reload();
+			}
 			// 添加head头
 			changeTitle(this.$route);
 			// 同步用户信息
@@ -145,6 +150,8 @@
 						item.groupId = null;
 						item.textMarker = null;
 						item.imgMarker = null;
+						item.x = null;
+						item.y = null;
 						return item;
 					});
 				})
@@ -179,6 +186,8 @@
 								user.textMarker = this.addTextMarker(item.place.x, item.place.y, item.place.group_id, user.name);
 							}
 							user.isOn = true;
+							user.x = item.place.x;
+							user.y = item.place.y;
 						} else {
 							// 移除原先图形
 							user.textMarker ? this.removeTextMarker(user.groupId, user.textMarker) : '';
@@ -187,6 +196,8 @@
 							user.groupId = '';
 							user.textMarker = '';
 							user.imgMarker = '';
+							user.x = '';
+							user.y = '';
 						}
 					});
 				})
@@ -251,6 +262,22 @@
 				});
 				layer.addMarker(im);  // 标注层添加Marker
 				return im;
+			},
+			shinePoint (user) {
+				if (!map || !user.isOn || !user.groupId) return '';
+				map.moveTo({
+					x: user.x,
+					y: user.y,
+					time: 1,
+					callback () {
+						user.imgMarker.jump({
+							times: 3,
+							duration: 1,
+							delay: 0.5,
+							height: 10
+						});
+					}
+				});
 			}
 		}
 	};
