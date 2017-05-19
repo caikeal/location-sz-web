@@ -139,6 +139,10 @@
 			if (this.autoTimer) {
 				clearInterval(this.autoTimer);
 			}
+			if (this.nowPlaceMaker) {
+				map.removeLocationMarker(this.nowPlaceMaker);
+				this.nowPlaceMaker = null;
+			}
 			map = null;
 		},
 		methods: {
@@ -329,7 +333,7 @@
 						// 设置定位点的y坐标
 						y: y,
 						// 设置定位点所在楼层
-						groupID: groupId,
+						groupID: Number(groupId),
 						// 设置定位点的高于楼层多少
 						zOffset: 1
 					});
@@ -358,7 +362,7 @@
 						// 设置定位点的y坐标
 						y: y,
 						// 设置定位点所在楼层
-						groupID: groupId,
+						groupID: Number(groupId),
 						// 设置定位点的高于楼层多少
 						zOffset: 1
 					});
