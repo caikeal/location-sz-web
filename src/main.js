@@ -20,7 +20,7 @@ router.beforeEach((to, from, next) => {
 	// 为了解决fengmap库（webGL）内存泄露问题,每次进入刷新带有地图页面
 	// 最2的地方是没有销毁map的方法。。。T T
 	if (to.name === 'Inspector' || to.name === 'Inspection') {
-		window.location.reload();
+		to.meta.refresh = true;
 	}
 	next();
 });

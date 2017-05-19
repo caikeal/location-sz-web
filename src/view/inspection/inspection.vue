@@ -96,6 +96,9 @@
 			}
 		},
 		created () {
+			if (this.$route.meta.refresh) {
+				window.location.reload();
+			}
 			// 添加head头
 			changeTitle(this.$route);
 			// 同步用户信息

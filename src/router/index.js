@@ -54,7 +54,8 @@ export default new Router({
 			component: inspection,
 			meta: {
 				title: '巡检',
-				workType: 'W'
+				workType: 'W',
+				refresh: false
 			}
 		},
 		{
@@ -81,7 +82,8 @@ export default new Router({
 			component: inspector,
 			meta: {
 				title: '人员定位',
-				workType: 'N'
+				workType: 'N',
+				refresh: false
 			}
 		}
 	]
