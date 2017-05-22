@@ -47,6 +47,7 @@
 		mounted () {
 			// 地图初始化
 			document.querySelector('.inspector-map-container').style.height = Math.floor(getScreenHeight() * 0.6) + 'px';
+			document.querySelector('.inspector-list').style.height = Math.ceil(getScreenHeight() * 0.4) + 'px';
 			this.initMap();
 			map.on('loadComplete', () => {
 				this.getUserPoint();
@@ -288,8 +289,9 @@
 			margin-top: 0px;
 		}
 		.inspector-list {
-			margin: 10px 15px;
+			padding: 10px 15px;
 			overflow: hidden;
+		    overflow-y: scroll;
 			& > .inspector-info {
 				width: 50%;
 				float: left;

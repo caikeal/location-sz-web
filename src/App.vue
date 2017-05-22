@@ -21,6 +21,28 @@ export default {
 	mounted () {
 		this.pointBack();
 		this.getPosition();
+		// setIntval(() => {
+		// 	window.bleLocation([
+		// 		{
+		// 			minor: 43443,
+		// 			major: 10101,
+		// 			uuid: 'FDA50693-A4E2-4FB1-AFCF-C6EB07647825',
+		// 			rssi: -60
+		// 		},
+		// 		{
+		// 			minor: 43640,
+		// 			major: 10101,
+		// 			uuid: 'FDA50693-A4E2-4FB1-AFCF-C6EB07647825',
+		// 			rssi: -91
+		// 		},
+		// 		{
+		// 			minor: 43423,
+		// 			major: 10101,
+		// 			uuid: 'FDA50693-A4E2-4FB1-AFCF-C6EB07647825',
+		// 			rssi: -82
+		// 		}
+		// 	]);
+		// });
 	},
 	methods: {
 		...mapMutations([
@@ -90,10 +112,10 @@ export default {
 @import './assets/sass/base/base.scss';
 
 .router-fade-enter-active, .router-fade-leave-active {
-  	transition: opacity .3s;
+	transition: opacity .3s;
 }
 .router-fade-enter, .router-fade-leave-active {
-  	opacity: 0;
+	opacity: 0;
 }
 body {
 	-webkit-font-smoothing: antialiased;
