@@ -32,8 +32,8 @@
 					<i></i>
 					<span>下个巡检位置</span>
 				</div>
-				<div class="place-name one-line">
-					<span>{{task.place ? task.place.name : ''}}</span>
+				<div class="place-name">
+					<span class="one-line">{{task.place ? task.place.name : ''}}</span>
 				</div>
 				<div class="quick-over">
 					<k-checkbox
@@ -516,7 +516,9 @@
 				    flex: 1;
 					line-height: 50px;
 					color: $color-light-black;
+					overflow: hidden;
 					span {
+						padding: 0 8px;
 						height: 30px;
 						line-height: 30px;
 						margin: 10px 0;
@@ -531,6 +533,7 @@
 					line-height: 50px;
 					color: $color-light-black;
 					cursor: pointer;
+					overflow: hidden;
 					span {
 						height: 30px;
 						line-height: 30px;
