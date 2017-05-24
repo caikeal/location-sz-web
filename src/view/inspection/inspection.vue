@@ -6,8 +6,8 @@
 					<img src="../../assets/images/logo/logo.png" alt="logo" class="img-logo">
 				</div>
 			</div>
-			<div class="time-counter">
-				<span>星期{{this.time.week}} {{this.time.year}}年{{this.time.month}}月{{this.time.day}}日</span>
+			<div class="time-counter cl-fx">
+				<span class="now-date">{{this.time.year}}-{{this.time.month}}-{{this.time.day}}&nbsp;&bull;&nbsp;星期{{this.time.week}}</span>
 				<span class="now-time">{{this.time.hour}}:{{this.time.minute}}:{{this.time.second}}</span>
 			</div>
 		</div>
@@ -21,19 +21,19 @@
 		<footer>
 			<div class="next-inspection cl-fx">
 				<div class="place-icon">
-					<i></i>
-					<span>下个巡检位置</span>
+					<router-link
+					v-if="needSolveTaskList.length && !this.task.disabled"
+					:to="{name: 'TaskDetail', params: {id: task.value}}">
+<!-- 						<span>巡检任务</span> -->
+					</router-link>
+					<!-- <span v-else>巡检任务</span> -->
 				</div>
 				<div class="place-name one-line">
 					<span>{{task.place ? task.place.name : ''}}</span>
 				</div>
 				<div class="task-name">
-					<router-link
-					v-if="needSolveTaskList.length && !this.task.disabled"
-					:to="{name: 'TaskDetail', params: {id: task.value}}">
-						<span>巡检任务</span>
-					</router-link>
-					<span v-else>巡检任务</span>
+					<i></i>
+					<span>下个巡检位置</span>
 				</div>
 				<div class="quick-over">
 					<k-checkbox
@@ -114,8 +114,8 @@
 				this.time = toCNTime(new Date());
 			}, 1000);
 			// 地图初始化
-			document.querySelector('.inspection-map').style.height = (getScreenHeight() - 220 - 49) + 'px';
-			document.querySelector('.inspection-map').style.marginTop = 220 + 'px';
+			document.querySelector('.inspection-map').style.height = (getScreenHeight() - 205 - 49) + 'px';
+			document.querySelector('.inspection-map').style.marginTop = 205 + 'px';
 			document.querySelector('.inspection-map').style.marginBottom = 49 + 'px';
 			this.initMap();
 			// 判断是否存在任务列表、待解决任务列表，存在读缓存，否则取新的
@@ -428,12 +428,22 @@
 			}
 			.time-counter {
 				background-color: $color-white;
-				margin-top: 15px;
-				padding: 20px 10px;
+				padding: 10px 10px;
+				color: $color-black2;
+				.now-date {
+					height: 38px;
+					line-height: 38px;
+				}
 				.now-time {
 					float: right;
 					font-size: 22px;
 					line-height: 0.8;
+					border-left: 1px dashed $color-grey2;
+					height: 38px;
+					line-height: 38px;
+					display: block;
+					padding-left: 20px;
+					font-weight: 600;
 				}
 				box-shadow: 0 0 0 1px hsla(0,0%,100%,.3) inset, 0 1px 5px rgba(171, 171, 171, 0.6);
 			}
@@ -466,16 +476,25 @@
 			border-top: 1px solid #e2e2e2;
 			z-index: 1000;
 			.next-inspection {
-				padding: 5px 10px;
 				font-size: 14px;
 				text-align: center;
+			    height: 50px;
+    			line-height: 50px;
+    			display: -webkit-box;
+			    display: -webkit-flex;
+			    display: -ms-flexbox;
+			    display: flex;
 				& > div {
 					float: left;
 					line-height: 1.5;
 				}
 				.place-icon {
-					width: 25%;
+					width: 50px;
 					font-size: 12px;
+					background-image: url('../../assets/images/inspection/mission.png');
+					background-size: 100% 100%;
+					background-repeat: no-repeat;
+					height: 100%;
 					i {
 						display: block;
 						width: 20px;
@@ -489,21 +508,41 @@
 					}
 				}
 				.place-name {
-					width: 36%;
-					line-height: 38px;
-					font-weight: 600;
+					-webkit-box-flex: 1;
+				    -webkit-flex: 1;
+				    -ms-flex: 1;
+				    flex: 1;
+					line-height: 50px;
+					color: $color-black;
+					span {
+						height: 30px;
+						line-height: 30px;
+						margin: 10px 0;
+						border-right: 1px solid $color-grey2;
+						display: block;
+					}
 				}
 				.task-name {
-					width: 22%;
-					line-height: 38px;
-					color: $info-color;
-					text-decoration: underline;
+					-webkit-box-flex: 1;
+				    -webkit-flex: 1;
+				    -ms-flex: 1;
+				    flex: 1;
+					line-height: 50px;
+					color: $color-black;
 					cursor: pointer;
+					span {
+						height: 30px;
+						line-height: 30px;
+						margin: 10px 0;
+						display: block;
+					}
 				}
 				.quick-over {
-					width: 17%;
-					line-height: 38px;
+					width: auto;
+					line-height: 50px;
 					cursor: pointer;
+					float: right;
+    				margin-right: 8px;
 				}
 			}
 		}

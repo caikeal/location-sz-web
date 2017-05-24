@@ -29,7 +29,7 @@ module.exports = {
     assetsPublicPath: '/',
     proxyTable: {
         '/api/v1': {
-            target: 'http://139.196.11.82:8100', // target host
+            target: 'http://hw.odinsoft.com.cn', // target host
             changeOrigin: true               // needed for virtual hosted sites
         }
     },
