@@ -24,16 +24,16 @@
 					<router-link
 					v-if="needSolveTaskList.length && !this.task.disabled"
 					:to="{name: 'TaskDetail', params: {id: task.value}}">
-<!-- 						<span>巡检任务</span> -->
+						<span></span>
 					</router-link>
-					<!-- <span v-else>巡检任务</span> -->
-				</div>
-				<div class="place-name one-line">
-					<span>{{task.place ? task.place.name : ''}}</span>
+					<span v-else></span>
 				</div>
 				<div class="task-name">
 					<i></i>
 					<span>下个巡检位置</span>
+				</div>
+				<div class="place-name one-line">
+					<span>{{task.place ? task.place.name : ''}}</span>
 				</div>
 				<div class="quick-over">
 					<k-checkbox
@@ -472,7 +472,7 @@
 			bottom: 0;
 			left: 0;
 			width: 100%;
-			background: #f8f8f8;
+			background: #fff;
 			border-top: 1px solid #e2e2e2;
 			z-index: 1000;
 			.next-inspection {
@@ -504,6 +504,8 @@
 						margin: 0 auto;
 					}
 					span {
+						width: 100%;
+						height: 100%;
 						display: block;
 					}
 				}
@@ -513,12 +515,11 @@
 				    -ms-flex: 1;
 				    flex: 1;
 					line-height: 50px;
-					color: $color-black;
+					color: $color-light-black;
 					span {
 						height: 30px;
 						line-height: 30px;
 						margin: 10px 0;
-						border-right: 1px solid $color-grey2;
 						display: block;
 					}
 				}
@@ -528,13 +529,14 @@
 				    -ms-flex: 1;
 				    flex: 1;
 					line-height: 50px;
-					color: $color-black;
+					color: $color-light-black;
 					cursor: pointer;
 					span {
 						height: 30px;
 						line-height: 30px;
 						margin: 10px 0;
 						display: block;
+						border-right: 1px solid $color-grey2;
 					}
 				}
 				.quick-over {
