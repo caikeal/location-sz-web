@@ -28,8 +28,8 @@
 		name: 'huawei-login',
 		data () {
 			return {
-				phone: '',
-				password: '',
+				phone: 13776073463,
+				password: 123456,
 				valid: {
 					msg: '',
 					ok: true
