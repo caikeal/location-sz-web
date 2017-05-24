@@ -21,7 +21,7 @@ export default {
 	mounted () {
 		this.pointBack();
 		this.getPosition();
-		// setIntval(() => {
+		// setInterval(() => {
 		// 	window.bleLocation([
 		// 		{
 		// 			minor: 43443,
