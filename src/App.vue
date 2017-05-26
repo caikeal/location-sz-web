@@ -8,7 +8,6 @@
 
 <script>
 import { mapState, mapMutations } from 'vuex';
-import apis from './service/getData.js';
 import beacon from './utils/beacon.js';
 
 export default {
@@ -21,28 +20,6 @@ export default {
 	mounted () {
 		this.pointBack();
 		this.getPosition();
-		// setInterval(() => {
-		// 	window.bleLocation([
-		// 		{
-		// 			minor: 43443,
-		// 			major: 10101,
-		// 			uuid: 'FDA50693-A4E2-4FB1-AFCF-C6EB07647825',
-		// 			rssi: -60
-		// 		},
-		// 		{
-		// 			minor: 43640,
-		// 			major: 10101,
-		// 			uuid: 'FDA50693-A4E2-4FB1-AFCF-C6EB07647825',
-		// 			rssi: -91
-		// 		},
-		// 		{
-		// 			minor: 43423,
-		// 			major: 10101,
-		// 			uuid: 'FDA50693-A4E2-4FB1-AFCF-C6EB07647825',
-		// 			rssi: -82
-		// 		}
-		// 	]);
-		// });
 	},
 	methods: {
 		...mapMutations([
@@ -57,7 +34,7 @@ export default {
 			 * 3.非巡检页面type使用N
 			 */
 			// 初始化函数，用户名,获取位置的回调函数
-			window.initPdrPosition(this.userInfo ? this.userInfo.phone : '13962175383', (x, y, groupID) => {
+			window.initPdrPosition('13962175383', (x, y, groupID) => {
 				let type = this.$route.meta.workType;
 				// 鉴权
 				if (type === 'S' || !this.userInfo || !this.userInfo.token) {
@@ -71,13 +48,6 @@ export default {
 					group_id: groupID
 				};
 				this.MY_OWN_PLACE(params);
-				apis.reportingLocation(params)
-				.then(() => {
-					return true;
-				})
-				.catch(() => {
-					return false;
-				});
 			});
 		},
 		getPosition () {

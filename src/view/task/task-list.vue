@@ -18,7 +18,6 @@
 </template>
 <script>
 	import changeTitle from '../../utils/changeTitle.js';
-	import { mapState, mapMutations } from 'vuex';
 	import apis from '../../service/getData.js';
 	import errorPublic from '../../service/errorPublic.js';
 	const abnormalIcon = require('../../assets/images/inspection/abnormal.png');
@@ -28,27 +27,9 @@
 
 	export default {
 		name: 'huawei-task-list',
-		computed: {
-			...mapState([
-				'userInfo',
-				'taskList',
-				'toSolveTaskList'
-			])
-		},
 		created () {
 			// 添加head头
 			changeTitle(this.$route);
-			// 同步用户信息
-			this.SYNC_USERINFO();
-			// 初步验证是否登录
-			if (!this.userInfo || !this.userInfo.token) {
-				this.$router.push({name: 'Login'});
-			}
-			// 判断是否存在任务列表、待解决任务列表，存在读缓存，否则取新的
-			// if (this.taskList.length === 0 || this.toSolveTaskList.length === 0) {
-				// this.getInspectionList();
-			// }
-			this.getInspectionList();
 		},
 		methods: {
 			...mapMutations([

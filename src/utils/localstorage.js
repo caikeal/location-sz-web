@@ -2,7 +2,7 @@
  * 注册localstorage事件，加入超时时间。
  */
 let expiration = 86400;         // 默认过期时间24h的秒数
-const baseHead = 'hwsh_ins';    // 保存基础空间名
+const baseHead = 'sz_test_ins';    // 保存基础空间名
 
 /**
  * 保存

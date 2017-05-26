@@ -1,7 +1,7 @@
 {
-  "name": "location-hwsh-inspection",
+  "name": "location-sz-test-web",
   "version": "1.0.0",
-  "description": "A Huawei project",
+  "description": "A suzhou test project",
   "author": "caikeal <546487590@qq.com>",
   "private": true,
   "scripts": {

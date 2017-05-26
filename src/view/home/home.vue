@@ -6,7 +6,7 @@
 		<div class="base-content">
 			<h3>
 				<strong>欢迎您</strong>
-				<span class="user-name">{{this.userInfo.name}}</span>
+				<span class="user-name">Caikeal</span>
 			</h3>
 			<p>
 				<span>今天是</span>
@@ -20,14 +20,13 @@
 				</span>
 			</div>
 			<div class="setting-bar">
-				<mt-button size="large" type="primary" class="btn-inspection" @click="goInspection">开始巡检</mt-button>
+				<mt-button size="large" type="primary" class="btn-inspection" @click="goInspection">开始定位</mt-button>
 			</div>
 		</div>
 	</div>
 </template>
 <script>
 	import changeTitle from '../../utils/changeTitle.js';
-	import { mapMutations, mapState } from 'vuex';
 	import { Button } from 'mint-ui';
 	import { getScreenHeight, toCNTime } from '../../utils/fixTool.js';
 
@@ -38,28 +37,14 @@
 				time: toCNTime(new Date())
 			};
 		},
-		computed: {
-			...mapState([
-				'userInfo'
-			])
-		},
 		created () {
 			// 添加head头
 			changeTitle(this.$route);
-			// 同步用户信息
-			this.SYNC_USERINFO();
-			// 初步验证是否登录
-			if (!this.userInfo || !this.userInfo.token) {
-				this.$router.push({name: 'Login'});
-			}
 		},
 		mounted () {
 			document.querySelector('.huawei-home').style.minHeight = getScreenHeight() + 'px';
 		},
 		methods: {
-			...mapMutations([
-				'SYNC_USERINFO'
-			]),
 			goInspection () {
 				this.$router.push({name: 'Inspection'});
 			}

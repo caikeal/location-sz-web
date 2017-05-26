@@ -11,50 +11,14 @@
 				<span class="now-time">{{this.time.hour}}:{{this.time.minute}}:{{this.time.second}}</span>
 			</div>
 		</div>
-		<div class="inspection-map">
-			<div class="task-list">
-				<router-link :to="{name: 'TaskList'}">
-					<span>列表</span>
-				</router-link>
-			</div>
-		</div>
-		<footer>
-			<div class="next-inspection cl-fx">
-				<div class="place-icon">
-					<router-link
-					v-if="needSolveTaskList.length && !this.task.disabled"
-					:to="{name: 'TaskDetail', params: {id: task.value}}">
-						<span></span>
-					</router-link>
-					<span v-else></span>
-				</div>
-				<div class="task-name">
-					<i></i>
-					<span>下个巡检位置</span>
-				</div>
-				<div class="place-name">
-					<span class="one-line">{{task.place ? task.place.name : ''}}</span>
-				</div>
-				<div class="quick-over">
-					<k-checkbox
-						:option="task"
-						v-model="taskCheck"
-						@input="quickReportTask">
-					</k-checkbox>
-				</div>
-			</div>
-		</footer>
+		<div class="inspection-map"></div>
 	</div>
 </template>
 <script>
 	import changeTitle from '../../utils/changeTitle.js';
-	import getDistance from '../../utils/mathExtends.js';
-	import { mapState, mapMutations } from 'vuex';
+	import { mapState } from 'vuex';
 	import { getScreenHeight, toCNTime } from '../../utils/fixTool.js';
 	import fengmap from 'fengmap';
-	import checkbox from '../../components/checkbox/checkbox.vue';
-	import apis from '../../service/getData.js';
-	import errorPublic from '../../service/errorPublic.js';
 	import env from '../../config/env.js';
 	let map = null; // 定义全局map变量
 
@@ -64,22 +28,11 @@
 			return {
 				time: toCNTime(new Date()),
 				autoTimer: '',
-				task: {
-					value: '',
-					label: '',
-					place: {name: ''},
-					disabled: true
-				},
-				taskCheck: '',
-				needSolveTaskList: [],
 				nowPlaceMaker: null
 			};
 		},
 		computed: {
 			...mapState([
-				'userInfo',
-				'taskList',
-				'toSolveTaskList',
 				'myPlace'
 			])
 		},
@@ -87,10 +40,6 @@
 			myPlace: {
 				handler (val) {
 					this.nowPlaceMaker = this.loactionMaker(val.x, val.y, val.group_id, val.direction);
-					let nearDis = getDistance(val, this.task.place);
-					if (!isNaN(nearDis) && nearDis <= 10) {
-						this.task.disabled = false;
-					};
 				},
 				deep: true
 			}
@@ -101,12 +50,6 @@
 			}
 			// 添加head头
 			changeTitle(this.$route);
-			// 同步用户信息
-			this.SYNC_USERINFO();
-			// 初步验证是否登录
-			if (!this.userInfo || !this.userInfo.token) {
-				this.$router.push({name: 'Login'});
-			}
 		},
 		mounted () {
 			// 开启定时器
@@ -114,29 +57,9 @@
 				this.time = toCNTime(new Date());
 			}, 1000);
 			// 地图初始化
-			document.querySelector('.inspection-map').style.height = (getScreenHeight() - 205 - 49) + 'px';
+			document.querySelector('.inspection-map').style.height = (getScreenHeight() - 205) + 'px';
 			document.querySelector('.inspection-map').style.marginTop = 205 + 'px';
-			document.querySelector('.inspection-map').style.marginBottom = 49 + 'px';
 			this.initMap();
-			// 判断是否存在任务列表、待解决任务列表，存在读缓存，否则取新的
-			if (this.taskList.length === 0 || this.toSolveTaskList.length === 0) {
-				this.getInspectionList();
-			} else if (this.toSolveTaskList.length) {
-				this.needSolveTaskList = this.toSolveTaskList;
-				this.task.place = this.toSolveTaskList[0].place ? this.toSolveTaskList[0].place : {name: ''};
-				this.task.value = this.toSolveTaskList[0].id;
-				// 地图加载完毕后加载点数据
-				map.on('loadComplete', () => {
-					if (this.task.place &&
-						this.task.place.hasOwnProperty('x')) {
-						this.task.place.options = this.imageMaker(this.task.place.x, this.task.place.y, this.task.place.group_id);
-					}
-				});
-			} else {
-				this.task.place.name = '今天任务已完成';
-				this.task.value = '';
-				this.task.disabled = true;
-			}
 		},
 		beforeDestroy () {
 			if (this.autoTimer) {
@@ -149,11 +72,6 @@
 			map = null;
 		},
 		methods: {
-			...mapMutations([
-				'SYNC_USERINFO',
-				'TASK_LIST',
-				'TO_SOLVE_TASK_LIST'
-			]),
 			initMap () {
 				let fmapID = env.mapInfo.id;
 				/* eslint-disable no-new, new-cap */
@@ -232,99 +150,6 @@
 					});
 				});
 			},
-			getInspectionList () {
-				apis.taskList()
-				.then((res) => {
-					this.chooseSolveTask(res.data.data);
-					this.TASK_LIST(res.data.data);
-				})
-				.catch((err) => {
-					errorPublic(err.response);
-				});
-			},
-			chooseSolveTask (tasks) {
-				if (tasks.length <= 0) {
-					return false;
-				}
-				this.needSolveTaskList = tasks.filter((item) => {
-					return item.status.length && item.status.indexOf('U') !== -1;
-				});
-				this.TO_SOLVE_TASK_LIST(this.needSolveTaskList);
-				if (this.needSolveTaskList.length) {
-					this.task.value = this.needSolveTaskList[0].id;
-					this.task.place = this.needSolveTaskList[0].place ? this.needSolveTaskList[0].place : {name: ''};
-
-					// 地图加载完毕后加载点数据
-					map.on('loadComplete', () => {
-						if (this.task.place && this.task.place.hasOwnProperty('x')) {
-							this.task.place.options = this.imageMaker(this.task.place.x, this.task.place.y, this.task.place.group_id);
-						}
-					});
-				} else {
-					this.task.place.name = '今天任务已完成';
-					this.task.value = '';
-					this.task.disabled = true;
-				}
-			},
-			quickReportTask () {
-				if (!this.task.value) {
-					return false;
-				}
-				this.task.disabled = true;
-				let params = {
-					has_suspicious_person: 2,
-					has_suspicious_item: 2
-				};
-				apis.reportTask(this.task.value, params)
-				.then((res) => {
-					// 切换到下个任务，并将当前任务从可用任务列表去除
-					this.removeFirstTask();
-				})
-				.catch((err) => {
-					errorPublic(err.response);
-				});
-			},
-			removeFirstTask () {
-				this.needSolveTaskList.shift(); // 移除第一项
-				this.TO_SOLVE_TASK_LIST(this.needSolveTaskList); // 同步数据
-				// 移除任务点
-				this.removeMarker(this.task.place.options);
-
-				if (this.needSolveTaskList.length === 0) { // 所有任务完成
-					// 修改提示
-					this.task.place.name = '今天任务已完成';
-					this.task.value = '';
-					return false;
-				}
-				this.task.value = this.needSolveTaskList[0].id;
-				this.task.place = this.needSolveTaskList[0].place ? this.needSolveTaskList[0].place : '';
-				// 添加巡检点
-				this.task.place.options = this.imageMaker(this.task.place.x, this.task.place.y, this.task.place.group_id);
-				this.task.disabled = false;
-				this.taskCheck = '';
-			},
-			// 标记巡检点
-			imageMaker (x, y, groupId) {
-				if (!map) return '';
-				let group = map.getFMGroup(groupId);
-				let layer = group.getOrCreateLayer('imageMarker');
-				// 图标标注对象，默认位置为该楼层中心点
-				let im = new fengmap.FMImageMarker({
-					x: x,
-					y: y,
-					z: 0,
-					url: '/static/img/redPoint.png',        // 设置图片路径
-					size: 80,                               // 设置图片显示尺寸
-					// 图片标注渲染完成的回调方法
-					callback: function () {
-						// 在图片载入完成后，设置 "一直可见",即显示优先级最高
-						// 如相同位置有其他标注，则此标注在前。
-						im.alwaysShow();
-					}
-				});
-				layer.addMarker(im);  // 标注层添加Marker
-				return {layer: layer, marker: im};
-			},
 			// 我的位置
 			loactionMaker (x, y, groupId, direction) {
 				if (!map) return '';
@@ -371,16 +196,7 @@
 					});
 				}
 				return lm;
-			},
-			// 去除巡检点
-			removeMarker (options) {
-				options.layer.removeMarker(options.marker);
-				options.marker = null;
-				options.layer = null;
 			}
-		},
-		components: {
-			[checkbox.name]: checkbox
 		}
 	};
 </script>
@@ -446,109 +262,6 @@
 					font-weight: 600;
 				}
 				box-shadow: 0 0 0 1px hsla(0,0%,100%,.3) inset, 0 1px 5px rgba(171, 171, 171, 0.6);
-			}
-		}
-		.inspection-map {
-			.task-list {
-				position: absolute;
-				bottom: 65px;
-				right: 30px;
-				width: 42px;
-				height: 42px;
-				background-color: $color-white;
-				cursor: pointer;
-				box-shadow: rgba(0, 0, 0, 0.3) 2px 2px 3px;
-				border-radius: 2px;
-				font-size: 0.8em;
-				font-weight: bold;
-				color: rgb(102, 102, 102);
-				text-align: center;
-				line-height: 42px;
-				z-index: 1;
-			}
-		}
-		footer {
-			position: fixed;
-			bottom: 0;
-			left: 0;
-			width: 100%;
-			background: #fff;
-			border-top: 1px solid #e2e2e2;
-			z-index: 1000;
-			.next-inspection {
-				font-size: 14px;
-				text-align: center;
-			    height: 50px;
-    			line-height: 50px;
-    			display: -webkit-box;
-			    display: -webkit-flex;
-			    display: -ms-flexbox;
-			    display: flex;
-				& > div {
-					float: left;
-					line-height: 1.5;
-				}
-				.place-icon {
-					width: 50px;
-					font-size: 12px;
-					background-image: url('../../assets/images/inspection/mission.png');
-					background-size: 100% 100%;
-					background-repeat: no-repeat;
-					height: 100%;
-					i {
-						display: block;
-						width: 20px;
-						height: 20px;
-						background: url('../../assets/images/inspection/main.png') no-repeat;
-						background-size: contain;
-						margin: 0 auto;
-					}
-					span {
-						width: 100%;
-						height: 100%;
-						display: block;
-					}
-				}
-				.place-name {
-					-webkit-box-flex: 1;
-				    -webkit-flex: 1;
-				    -ms-flex: 1;
-				    flex: 1;
-					line-height: 50px;
-					color: $color-light-black;
-					overflow: hidden;
-					span {
-						padding: 0 8px;
-						height: 30px;
-						line-height: 30px;
-						margin: 10px 0;
-						display: block;
-					}
-				}
-				.task-name {
-					-webkit-box-flex: 1;
-				    -webkit-flex: 1;
-				    -ms-flex: 1;
-				    flex: 1;
-					line-height: 50px;
-					color: $color-light-black;
-					cursor: pointer;
-					overflow: hidden;
-					span {
-						height: 30px;
-						line-height: 30px;
-						margin: 10px 0;
-						display: block;
-						border-right: 1px solid $color-grey2;
-					}
-				}
-				.quick-over {
-					width: auto;
-					line-height: 50px;
-					cursor: pointer;
-					float: right;
-    				margin-right: 8px;
-				}
 			}
 		}
 	}
